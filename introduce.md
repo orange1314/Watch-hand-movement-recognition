@@ -213,7 +213,7 @@ $$
 在 GMM 中，似然函數為：
 
 $$
-L(\{ w_i, \mu_i, \sigma_i^2 \}_{i=1}^{K}) = \prod_{j=1}^{n} \sum_{i=1}^{K} w_i \cdot \mathcal{N}(x_j; \mu_i, \sigma_i^2)
+L(\{ w_i, \mu_i, \sigma_i^2 \}_ {i=1}^{K}) = \prod_{j=1}^{n} \sum_{i=1}^{K} w_i \cdot \mathcal{N}(x_j; \mu_i, \sigma_i^2)
 $$
 
 直接最大化該似然函數較為複雜，因此採用 **期望最大化（EM）算法** 進行參數估計。
