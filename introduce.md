@@ -140,29 +140,29 @@ $$
 
 - **對於均值 $\mu$**，當 $\sigma^2$ 已知時，樣本均值 $\hat{\mu}$ 的分佈為：
 
-  $$
-  \hat {\mu} \sim \mathcal{N} \left( \mu, \frac {\sigma^2}{n})
-  $$
+$$
+\hat{\mu} \sim \mathcal{N}\left( \mu, \frac{\sigma^2}{n} \right)
+$$
 
   因此，$\mu$ 的 $(1 - \alpha)$ 信賴區間為：
 
-  $$
-  \left[ \hat{\mu} - z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{n}}, \hat{\mu} + z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{n}} \right]
-  $$
+$$
+\left[ \hat{\mu} - z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{n}}, \hat{\mu} + z_{\alpha/2} \cdot \frac{\sigma}{\sqrt{n}} \right]
+$$
 
   其中，$z_{\alpha/2}$ 是標準正態分佈的臨界值。
 
 - **對於方差 $\sigma^2$**，使用 $\chi^2$ 分佈構建信賴區間：
 
-  $$
-  \frac{(n - 1)\hat{\sigma}^2}{\sigma^2} \sim \chi^2_{n - 1}
-  $$
+$$
+\frac{(n - 1)\hat{\sigma}^2}{\sigma^2} \sim \chi^2_{n - 1}
+$$
 
   因此，$\sigma^2$ 的 $(1 - \alpha)$ 信賴區間為：
 
-  $$
-  \left[ \frac{(n - 1)\hat{\sigma}^2}{\chi^2_{n - 1, 1 - \alpha/2}}, \frac{(n - 1)\hat{\sigma}^2}{\chi^2_{n - 1, \alpha/2}} \right]
-  $$
+$$
+\left[ \frac{(n - 1)\hat{\sigma}^2}{\chi^2_{n - 1, 1 - \alpha/2}}, \frac{(n - 1)\hat{\sigma}^2}{\chi^2_{n - 1, \alpha/2}} \right]
+$$
 
 ---
 
@@ -186,9 +186,9 @@ $$
 - $w_i$：第 $i$ 個成分的權重，滿足 $\sum_{i=1}^{K} w_i = 1$。
 - $\mathcal{N}(x; \mu_i, \sigma_i^2)$：第 $i$ 個高斯成分的概率密度函數，定義為：
 
-  $$
-  \mathcal{N}(x; \mu_i, \sigma_i^2) = \frac{1}{\sqrt{2\pi \sigma_i^2}} \exp\left( -\frac{(x - \mu_i)^2}{2\sigma_i^2} \right)
-  $$
+$$
+\mathcal{N}(x; \mu_i, \sigma_i^2) = \frac{1}{\sqrt{2\pi \sigma_i^2}} \exp\left( -\frac{(x - \mu_i)^2}{2\sigma_i^2} \right)
+$$
 
 ---
 
@@ -245,21 +245,21 @@ $$
 
 - 更新權重 $w_i$：
 
-  $$
-  w_i^{(t+1)} = \frac{1}{n} \sum_{j=1}^{n} \gamma_{ij}
-  $$
+$$
+w_i^{(t+1)} = \frac{1}{n} \sum_{j=1}^{n} \gamma_{ij}
+$$
 
 - 更新均值 $\mu_i$：
 
-  $$
-  \mu_i^{(t+1)} = \frac{\sum_{j=1}^{n} \gamma_{ij} x_j}{\sum_{j=1}^{n} \gamma_{ij}}
-  $$
+$$
+\mu_i^{(t+1)} = \frac{\sum_{j=1}^{n} \gamma_{ij} x_j}{\sum_{j=1}^{n} \gamma_{ij}}
+$$
 
 - 更新方差 $\sigma_i^2$：
 
-  $$
-  (\sigma_i^2)^{(t+1)} = \frac{\sum_{j=1}^{n} \gamma_{ij} (x_j - \mu_i^{(t+1)})^2}{\sum_{j=1}^{n} \gamma_{ij}}
-  $$
+$$
+(\sigma_i^2)^{(t+1)} = \frac{\sum_{j=1}^{n} \gamma_{ij} (x_j - \mu_i^{(t+1)})^2}{\sum_{j=1}^{n} \gamma_{ij}}
+$$
 
 ---
 
@@ -366,9 +366,9 @@ $$
 
    高斯混合模型的概率密度函數為：
 
-   $$
-   p(x) = \sum_{i=1}^{K} w_i \cdot \mathcal{N}(x; \mu_i, \sigma_i^2)
-   $$
+$$
+p(x) = \sum_{i=1}^{K} w_i \cdot \mathcal{N}(x; \mu_i, \sigma_i^2)
+$$
 
 2. **生成密度函數的網格**
 
@@ -382,9 +382,9 @@ $$
 
    對排序後的密度值進行累積，計算累積概率：
 
-   $$
-   A_{\text{cumulative}} = \sum_{i=1}^{M} p(x_{(i)}) \Delta x
-   $$
+$$
+A_{\text{cumulative}} = \sum_{i=1}^{M} p(x_{(i)}) \Delta x
+$$
 
    其中，$\Delta x$ 是網格間距，$M$ 是滿足 $A_{\text{cumulative}} \geq \alpha$ 的最小整數，$\alpha$ 是信心水準（如 0.95）。
 
@@ -392,9 +392,9 @@ $$
 
    將累積概率達到 $\alpha$ 的網格點範圍作為信賴區間：
 
-   $$
-   [x_{\text{min}}, x_{\text{max}}] = [\min\{ x_{(1)}, \dots, x_{(M)} \}, \max\{ x_{(1)}, \dots, x_{(M)} \}]
-   $$
+$$
+[x_{\text{min}}, x_{\text{max}}] = [\min\{ x_{(1)}, \dots, x_{(M)} \}, \max\{ x_{(1)}, \dots, x_{(M)} \}]
+$$
 
 **（3）數學解釋**
 
@@ -479,27 +479,27 @@ $$
 
   - 準確率（Accuracy）：
 
-    $$
-    \text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN} = \frac{114 + 1,194}{114 + 1,194 + 141 + 16} \approx 89.28\%
-    $$
+$$
+\text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN} = \frac{114 + 1,194}{114 + 1,194 + 141 + 16} \approx 89.28\%
+$$
 
   - 精確率（Precision）：
 
-    $$
-    \text{Precision} = \frac{TP}{TP + FP} = \frac{114}{114 + 141} \approx 44.71\%
-    $$
+$$
+\text{Precision} = \frac{TP}{TP + FP} = \frac{114}{114 + 141} \approx 44.71\%
+$$
 
   - 召回率（Recall）：
 
-    $$
-    \text{Recall} = \frac{TP}{TP + FN} = \frac{114}{114 + 16} \approx 87.69\%
-    $$
+$$
+\text{Recall} = \frac{TP}{TP + FN} = \frac{114}{114 + 16} \approx 87.69\%
+$$
 
   - F1 分數（F1 Score）：
 
-    $$
-    \text{F1 Score} = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}} \approx 59.52\%
-    $$
+$$
+\text{F1 Score} = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}} \approx 59.52\%
+$$
 
 **討論**：
 
@@ -566,27 +566,27 @@ $$
 
   - 準確率（Accuracy）：
 
-    $$
-    \text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN} = \frac{9,449 + 26,500}{9,449 + 26,500 + 300 + 3,229} \approx 91.06\%
-    $$
+$$
+\text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN} = \frac{9,449 + 26,500}{9,449 + 26,500 + 300 + 3,229} \approx 91.06\%
+$$
 
   - 精確率（Precision）：
 
-    $$
-    \text{Precision} = \frac{TP}{TP + FP} = \frac{9,449}{9,449 + 300} \approx 96.92\%
-    $$
+$$
+\text{Precision} = \frac{TP}{TP + FP} = \frac{9,449}{9,449 + 300} \approx 96.92\%
+$$
 
   - 召回率（Recall）：
 
-    $$
-    \text{Recall} = \frac{TP}{TP + FN} = \frac{9,449}{9,449 + 3,229} \approx 74.53\%
-    $$
+$$
+\text{Recall} = \frac{TP}{TP + FN} = \frac{9,449}{9,449 + 3,229} \approx 74.53\%
+$$
 
   - F1 分數（F1 Score）：
 
-    $$
-    \text{F1 Score} = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}} \approx 84.26\%
-    $$
+$$
+\text{F1 Score} = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}} \approx 84.26\%
+$$
 
 **討論**：
 
