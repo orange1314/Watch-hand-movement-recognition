@@ -141,7 +141,7 @@ $$
 - **對於均值 $\mu$**，當 $\sigma^2$ 已知時，樣本均值 $\hat{\mu}$ 的分佈為：
 
   $$
-  \hat{\mu}\sim\mathcal{N}\left(\mu,\frac{\sigma^2}{n}\right)
+  \hat {\mu} \sim \mathcal{N} \left( \mu, \frac {\sigma^2}{n} \right)
   $$
 
   因此，$\mu$ 的 $(1 - \alpha)$ 信賴區間為：
