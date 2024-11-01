@@ -384,7 +384,7 @@ def predict_segments(data, action_models, variables, segment_size):
 
 ### **函數 4：`apply_pca_changepoint_detection`**
 
-def apply_pca_changepoint_detection(data, variables, segment_size, sampling_interval=5):
+def apply_pca_changepoint_detection(data, variables, segment_size, sampling_interval=4):
     """
     使用 PCA 和變換點檢測劃分區間，支持間隔采樣以提高性能。
     """
