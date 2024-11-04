@@ -26,16 +26,16 @@ from EM import CustomEMModel
 warnings.filterwarnings('ignore', message='KMeans is known to have a memory leak on Windows with MKL')
 
 def aw_train(base_dir='data/write',
-          saved_models_dir='saved_models',
-          plot_dir='pic/ProbabilityDensity',
-          segment_size=100,
-          window_size=100,
-          variables = ['GravityX', 'GravityY', 'GravityZ','UserAccelerationX','UserAccelerationY','UserAccelerationZ'],
-          confidence_level=0.997,
-          gmmsmooth=1,
-          expsmooth=0.1,
-          plot=True,
-          n_components=15):
+             saved_models_dir='saved_models',
+             plot_dir='pic/ProbabilityDensity',
+             segment_size=100,
+             window_size=100,
+             variables=['GravityX', 'GravityY', 'GravityZ', 'UserAccelerationX', 'UserAccelerationY', 'UserAccelerationZ'],
+             confidence_level=0.997,
+             gmmsmooth=1,
+             expsmooth=0.1,
+             plot=True,
+             n_components=15):
     """
     整合數據處理、模型訓練、信賴區間計算及結果保存的訓練函數。
 
@@ -59,11 +59,21 @@ def aw_train(base_dir='data/write',
     # 遍歷資料目錄，讀取 CSV 檔案並分割數據
     for root, _, files in os.walk(base_dir):
         for file in files:
+            if file.startswith("._"):
+                continue  # 忽略以 '._' 開頭的文件
             if file.endswith(".csv"):
                 file_path = os.path.join(root, file)
-                data = pd.read_csv(file_path)
+                data = pd.read_csv(file_path, encoding='ISO-8859-1')
+                
+                # 列名檢查
+                missing_columns = [col for col in variables if col not in data.columns]
+                if missing_columns:
+                    raise KeyError(f"文件 {file} 中缺少以下列：{missing_columns}")
+                
+                # 取出指定列
                 scaled_df = data[variables]
 
+                # 分割時間序列段
                 for i in range(0, len(scaled_df) - segment_size + 1, window_size):
                     segment = scaled_df.iloc[i:i+segment_size]
                     if len(segment) == segment_size:
@@ -76,6 +86,8 @@ def aw_train(base_dir='data/write',
     training_data_tensor = torch.tensor(training_data_array, dtype=torch.float32)
 
     print(f"總共有 {len(training_data)} 段時間序列數據，每段長度為 {segment_size}")
+
+
 
     def fit_and_plot_model(data, model, title, xlabel, ylabel, variable, filename, bins=300, fit_curve=True, plot_flag=True):
         data = data.reshape(-1)
@@ -384,7 +396,7 @@ def predict_segments(data, action_models, variables, segment_size):
 
 ### **函數 4：`apply_pca_changepoint_detection`**
 
-def apply_pca_changepoint_detection(data, variables, segment_size, sampling_interval=4):
+def apply_pca_changepoint_detection(data, variables, segment_size, sampling_interval=2):
     """
     使用 PCA 和變換點檢測劃分區間，支持間隔采樣以提高性能。
     """
@@ -499,15 +511,17 @@ def smooth_labels_func(data, segments, min_action_length):
 
 ### **函數 6：`visualize_results`**
 
+
+
 def visualize_results(data, labels, file_path, show_image=False):
     """
     可視化結果，輸出兩張圖，一張使用重力變量（Gravity），一張使用用戶加速度變量（UserAcceleration）。
     """
     # 第一張圖：使用 GravityX, GravityY, GravityZ
     plt.figure(figsize=(12, 6))
-    plt.plot(data['DateTime'], data['GravityX'], label='GravityX', color='b')
-    plt.plot(data['DateTime'], data['GravityY'], label='GravityY', color='r')
-    plt.plot(data['DateTime'], data['GravityZ'], label='GravityZ', color='g')
+    plt.plot(data.index, data['GravityX'], label='GravityX', color='b')
+    plt.plot(data.index, data['GravityY'], label='GravityY', color='r')
+    plt.plot(data.index, data['GravityZ'], label='GravityZ', color='g')
 
     # 獲取動作標簽
     unique_actions = set(labels)
@@ -516,23 +530,23 @@ def visualize_results(data, labels, file_path, show_image=False):
     legend_patches = {}
 
     current_label = labels[0]
-    start_time = data['DateTime'].iloc[0]
+    start_idx = 0
     for i in range(1, len(labels)):
         if labels[i] != current_label:
-            end_time = data['DateTime'].iloc[i - 1]
+            end_idx = i - 1
             color = action_color_map[current_label]
-            plt.axvspan(start_time, end_time, color=color, alpha=0.3)
+            plt.axvspan(start_idx, end_idx, color=color, alpha=0.3)
             if current_label not in legend_patches:
                 legend_patches[current_label] = mpatches.Patch(color=color, alpha=0.3, label=current_label)
             current_label = labels[i]
-            start_time = data['DateTime'].iloc[i]
-    end_time = data['DateTime'].iloc[-1]
+            start_idx = i
+    end_idx = len(labels) - 1
     color = action_color_map[current_label]
-    plt.axvspan(start_time, end_time, color=color, alpha=0.3)
+    plt.axvspan(start_idx, end_idx, color=color, alpha=0.3)
     if current_label not in legend_patches:
         legend_patches[current_label] = mpatches.Patch(color=color, alpha=0.3, label=current_label)
 
-    plt.xlabel('Time')
+    plt.xlabel('Sample Index')
     plt.ylabel('Gravity Values')
     plt.title('GravityX, GravityY, GravityZ with Action Annotations')
     plt.legend(handles=list(legend_patches.values()))
@@ -547,25 +561,25 @@ def visualize_results(data, labels, file_path, show_image=False):
 
     # 第二張圖：使用 UserAccelerationX, UserAccelerationY, UserAccelerationZ
     plt.figure(figsize=(12, 6))
-    plt.plot(data['DateTime'], data['UserAccelerationX'], label='UserAccelerationX', color='b')
-    plt.plot(data['DateTime'], data['UserAccelerationY'], label='UserAccelerationY', color='r')
-    plt.plot(data['DateTime'], data['UserAccelerationZ'], label='UserAccelerationZ', color='g')
+    plt.plot(data.index, data['UserAccelerationX'], label='UserAccelerationX', color='b')
+    plt.plot(data.index, data['UserAccelerationY'], label='UserAccelerationY', color='r')
+    plt.plot(data.index, data['UserAccelerationZ'], label='UserAccelerationZ', color='g')
 
     # 繼續使用相同的動作標簽顯示
     current_label = labels[0]
-    start_time = data['DateTime'].iloc[0]
+    start_idx = 0
     for i in range(1, len(labels)):
         if labels[i] != current_label:
-            end_time = data['DateTime'].iloc[i - 1]
+            end_idx = i - 1
             color = action_color_map[current_label]
-            plt.axvspan(start_time, end_time, color=color, alpha=0.3)
+            plt.axvspan(start_idx, end_idx, color=color, alpha=0.3)
             current_label = labels[i]
-            start_time = data['DateTime'].iloc[i]
-    end_time = data['DateTime'].iloc[-1]
+            start_idx = i
+    end_idx = len(labels) - 1
     color = action_color_map[current_label]
-    plt.axvspan(start_time, end_time, color=color, alpha=0.3)
+    plt.axvspan(start_idx, end_idx, color=color, alpha=0.3)
 
-    plt.xlabel('Time')
+    plt.xlabel('Sample Index')
     plt.ylabel('User Acceleration Values')
     plt.title('UserAccelerationX, UserAccelerationY, UserAccelerationZ with Action Annotations')
     plt.legend(handles=list(legend_patches.values()))
